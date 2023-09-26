@@ -1,26 +1,24 @@
 import nodeRSA from 'node-rsa';
 
 /**
- * return the decrypted Data (RSA OAEP Encryption)
- * @param {string} RSAPrivateKey 
- * @param {string} EncrypteDataBuffer
- * @returns {string} Data decrypted data
+ * Decrypt the given message using the provided private key.
+ * This method uses {@link https://en.wikipedia.org/wiki/Optimal_asymmetric_encryption_padding OAEP}
+ * @param {string} privateKey RSA Private key to decrypt the given data
+ * @param {string} encryptedData The data with the encrypted message
+ * @returns A Buffer with the message decrypted
  */
-var RSA_OAEP_Decrypt = function(RSAPrivateKey, encryptedData){
-    // ----- Setting RSA OAEP Configuration [ start ] -----
-    let RSAPrivate = new nodeRSA(RSAPrivateKey);
-    RSAPrivate.setOptions({
+function rsaDecrypt(privateKey, encryptedData) {
+    const rsa = new nodeRSA(privateKey);
+    // Configure RSA OAEP settings
+    rsa.setOptions({
         environment: 'browser',
         encryptionScheme: {
             scheme: 'pkcs1_oaep',
             hash: 'sha256'
         }
     });
-    // ----- Setting RSA OAEP Configuration [ end ] -----
-  
-    let result = RSAPrivate.decrypt(encryptedData);
-    return result;
-};
+    return rsa.decrypt(encryptedData);
+}
 
 /**
  * Decrypts the given base64 encrypted challenge using the private key
@@ -28,6 +26,6 @@ var RSA_OAEP_Decrypt = function(RSAPrivateKey, encryptedData){
  * @returns unencrypted challenge
  */
 export function decrypt(challenge) {
-    const decrypted = RSA_OAEP_Decrypt(process.env.RSA_PRIVATE_KEY, challenge)
+    const decrypted = rsaDecrypt(process.env.RSA_PRIVATE_KEY, challenge)
     return decrypted.toString("utf8")
 }

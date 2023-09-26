@@ -18,5 +18,6 @@
   "homepage": "https://github.com/greivinlopez/kairosnodeclient#readme",
   "dependencies": {
     "node-rsa": "^1.1.1"
-  }
+  },
+  "type": "module"
 }
